@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小智游乐场 - 小朋友的编程乐园</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+</head>
+<body>
+
+    <!-- 顶部彩条 -->
+    <div class="hand-drawn-border"></div>
+
+    <div class="main-wrapper">
+        
+        <!-- 贴纸收集册 -->
+        <div class="reward-pool">
+            <div class="reward-container" id="rewardContainer"></div>
+        </div>
+
+        <!-- 标题 -->
+        <div class="big-title">
+            <h1>🎪 小智编程游乐场 🐱</h1>
+            <p>✏️ 和软萌小智一起，玩着学编程 ✨</p>
+        </div>
+
+        <!-- 主要内容 -->
+        <div class="content-layout">
+            <div class="left-area">
+                
+                <!-- 聊天区 -->
+                <div class="chat-room">
+                    <div class="chat-cat" onclick="catClick()">
+                        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <ellipse cx="50" cy="65" rx="26" ry="20" fill="#FFB380" stroke="#E67E22" stroke-width="2.5"/>
+                            <circle cx="50" cy="42" r="20" fill="#FFB380" stroke="#E67E22" stroke-width="2.5"/>
+                            <polygon points="34,28 30,10 40,22" fill="#FFB380" stroke="#E67E22" stroke-width="2.5"/>
+                            <polygon points="66,28 70,10 60,22" fill="#FFB380" stroke="#E67E22" stroke-width="2.5"/>
+                            <ellipse cx="42" cy="40" rx="3.5" ry="4.5" fill="#2D2D2D"/>
+                            <ellipse cx="58" cy="40" rx="3.5" ry="4.5" fill="#2D2D2D"/>
+                            <circle cx="43" cy="38" r="1.5" fill="white"/>
+                            <circle cx="59" cy="38" r="1.5" fill="white"/>
+                            <path d="M48 46 Q50 49 52 46" stroke="#E67E22" stroke-width="1.5" fill="none"/>
+                            <circle cx="50" cy="47" r="1.8" fill="#FF8888"/>
+                        </svg>
+                    </div>
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="chat-message bot">
+                            <div class="chat-avatar">🐱</div>
+                            <div class="chat-bubble bot-bubble">
+                                ✨ 嘻嘻～ 欢迎来到小智的游乐场！<div style="font-size:9px;margin-top:4px;">刚刚</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" id="chatInput" class="chat-input" placeholder="敲敲键盘，问小智问题～" onkeypress="if(event.key==='Enter') sendChatMessage()">
+                        <button class="chat-send" onclick="sendChatMessage()">🐾</button>
+                    </div>
+                </div>
+
+                <!-- 四个功能卡片 -->
+                <div class="cards-grid">
+                    <div class="fun-card">
+                        <div class="card-icon">🤖🐱</div>
+                        <h3 style="color:#FF6B6B;">找小智答疑</h3>
+                        <p>AI老师随时帮你解答</p>
+                        <button class="hand-btn btn-pink" onclick="openAIModal()">📢 戳我提问</button>
+                    </div>
+                    <div class="fun-card">
+                        <div class="card-icon">🗺️🐾</div>
+                        <h3 style="color:#6BCB77;">挑战关卡</h3>
+                        <p>10个主题，15天闯关</p>
+                        <button class="hand-btn btn-green" onclick="openPlanModal()">🎯 开始挑战</button>
+                    </div>
+                    <div class="fun-card">
+                        <div class="card-icon">🔍🐱</div>
+                        <h3 style="color:#FFD93D;">代码医生</h3>
+                        <p>帮代码找出小毛病</p>
+                        <button class="hand-btn btn-yellow" onclick="openDoctorModal()">🔍 快帮忙</button>
+                    </div>
+                    <div class="fun-card">
+                        <div class="card-icon">💻🎨</div>
+                        <h3 style="color:#9B59B6;">动手创作</h3>
+                        <p>写代码立刻运行</p>
+                        <button class="hand-btn btn-purple" onclick="openLabModal()">✨ 来创作</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 漂浮装饰 -->
+        <div class="float-item" style="top:12%;left:3%;">⭐</div>
+        <div class="float-item" style="top:22%;right:22%;">🌈</div>
+        <div class="float-item" style="bottom:28%;left:6%;">🐾</div>
+        <div class="float-item" style="top:78%;right:23%;">🎈</div>
+
+        <!-- 走路小猫 -->
+        <div class="walking-cat" id="walkingCat" onclick="catClick()">🐱</div>
+    </div>
+
+    <!-- ========== 弹窗 ========== -->
+
+    <!-- AI答疑弹窗 - 注意：不需要API Key输入框了 -->
+    <div id="aiModal" class="modal-window" style="display:none;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+            <h2>🤖 找小智答疑 🐱</h2>
+            <button onclick="closeAIModal()" style="background:#E8E0D5;border:none;padding:8px 20px;border-radius:30px;cursor:pointer;">✖️ 关闭</button>
+        </div>
+        <textarea id="aiQuestion" rows="4" placeholder="想问小智什么？比如：变量是什么？循环怎么用？" style="width:100%;margin:8px 0;padding:10px;border-radius:20px;border:2px solid #FFE0B5;font-size:14px;"></textarea>
+        <button class="hand-btn btn-pink" onclick="askAI()" style="width:100%;">✨ 问小智 ✨</button>
+        <div id="aiResult" style="margin-top:10px;padding:12px;background:#FFF9F0;border-radius:20px;min-height:40px;">✨ 等你的问题～</div>
+    </div>
+
+    <!-- 闯关弹窗 -->
+    <div id="planModal" class="modal-window" style="display:none;max-height:85vh;overflow-y:auto;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+            <h2>🗺️ 挑战关卡拿星星</h2>
+            <button onclick="closePlanModal()" style="background:#E8E0D5;border:none;padding:8px 20px;border-radius:30px;cursor:pointer;">✖️ 关闭</button>
+        </div>
+        <div id="planTopicList"></div>
+        <div id="planDaysList"></div>
+    </div>
+
+    <!-- Bug医生弹窗 -->
+    <div id="doctorModal" class="modal-window" style="display:none;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+            <h2>🔍 代码医生</h2>
+            <button onclick="closeDoctorModal()" style="background:#E8E0D5;border:none;padding:8px 20px;border-radius:30px;cursor:pointer;">✖️ 关闭</button>
+        </div>
+        <textarea id="bugCode" rows="4" placeholder="把出错的代码贴这里..." style="width:100%;margin:8px 0;padding:10px;border-radius:20px;border:2px solid #FFE0B5;font-size:14px;font-family:monospace;"></textarea>
+        <textarea id="bugError" rows="2" placeholder="报了什么错？（可选）" style="width:100%;margin:8px 0;padding:10px;border-radius:20px;border:2px solid #FFE0B5;font-size:14px;"></textarea>
+        <button class="hand-btn btn-yellow" onclick="findBug()" style="width:100%;">🔍 帮帮我</button>
+        <div id="doctorResult" style="margin-top:10px;padding:12px;background:#FFF9F0;border-radius:20px;min-height:40px;">✨ 等你的代码～</div>
+    </div>
+
+    <!-- 实验室弹窗 -->
+    <div id="labModal" class="modal-window" style="display:none;max-height:85vh;overflow-y:auto;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+            <h2>💻 动手创作</h2>
+            <button onclick="closeLabModal()" style="background:#E8E0D5;border:none;padding:8px 20px;border-radius:30px;cursor:pointer;">✖️ 关闭</button>
+        </div>
+        <div id="labTaskInfo" style="background:#FFF3E0;padding:10px;border-radius:18px;margin-bottom:8px;"></div>
+        <div id="exampleCodeArea" style="display:none;">
+            <div style="font-weight:bold;margin:5px 0;">📋 照着敲：</div>
+            <div class="example-code" id="exampleCodeContent"></div>
+        </div>
+        <div class="warning-tips">⚠️ 用英文输入法，符号要英文的 ( ) { } ;</div>
+        <textarea id="labEditor" rows="6" class="code-editor" placeholder="自己动手敲代码～"></textarea>
+        <div style="display:flex;gap:10px;margin:10px 0;">
+            <button class="hand-btn btn-green" onclick="runAndCheckCode()">▶ 运行并点亮星星</button>
+            <button class="hand-btn btn-purple" onclick="clearLab()">🗑️ 清空</button>
+        </div>
+        <div id="labOutput" style="background:#2D2D2D;color:#A8E6CF;padding:12px;border-radius:18px;font-family:monospace;min-height:40px;white-space:pre-wrap;">✨ 敲完代码点运行～</div>
+        <div id="errorGuide" style="display:none;" class="error-guide">
+            💡 代码出错了？让 <span class="bug-link" onclick="goToBugDoctor()">🔧 Bug小医生</span> 帮你瞧瞧～
+        </div>
+    </div>
+
+    <!-- 引入文件 -->
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
